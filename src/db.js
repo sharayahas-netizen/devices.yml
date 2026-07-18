@@ -1,6 +1,5 @@
 'use strict';
 
-const { DatabaseSync } = require('node:sqlite');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -9,7 +8,17 @@ const bcrypt = require('bcryptjs');
 const DATA_DIR = path.join(__dirname, '..', 'data');
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
-const db = new DatabaseSync(path.join(DATA_DIR, 'survey.db'));
+// Node 22.5+ ships SQLite built in; older Nodes (e.g. 20.x) fall back to
+// better-sqlite3. Both expose the same prepare/get/all/run/exec API surface.
+const DB_FILE = path.join(DATA_DIR, 'survey.db');
+let db;
+try {
+  const { DatabaseSync } = require('node:sqlite');
+  db = new DatabaseSync(DB_FILE);
+} catch {
+  const Database = require('better-sqlite3');
+  db = new Database(DB_FILE);
+}
 db.exec('PRAGMA journal_mode = WAL;');
 db.exec('PRAGMA foreign_keys = ON;');
 

@@ -8,17 +8,15 @@
 
 ## المتطلبات
 
-- سيرفر لينكس (أو ويندوز) عليه **Node.js إصدار 22.5 أو أحدث**
+- سيرفر لينكس (أو ويندوز) عليه **Node.js إصدار 20 أو أحدث** (مع Node 22.5+ يستخدم SQLite المدمجة، ومع الإصدارات الأقدم يستخدم حزمة better-sqlite3 تلقائياً)
 
 ## التنصيب على السيرفر (192.168.1.14)
 
 نفّذ هذه الأوامر على السيرفر — البرنامج يُنصّب في مجلد مستقل `/opt/hotel-survey` ولا يلمس أي خدمة أخرى موجودة على السيرفر:
 
 ```bash
-# 1) تأكد من وجود Node.js 22.5 أو أحدث
+# 1) تأكد من وجود Node.js 20 أو أحدث
 node --version
-# إن لم يكن مثبتاً أو كان قديماً:
-# curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt-get install -y nodejs
 
 # 2) انسخ المشروع إلى مجلد منفصل
 sudo git clone -b claude/hotel-survey-program-gwjhyn https://github.com/sharayahas-netizen/devices.yml.git /opt/hotel-survey
