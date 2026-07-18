@@ -182,6 +182,11 @@ app.post('/admin/rooms/:id/reopen', requireAdmin, (req, res) => {
   res.redirect('/admin/rooms?msg=' + encodeURIComponent('تم فتح الاستبيان للغرفة'));
 });
 
+app.post('/admin/rooms/:id/delete', requireAdmin, (req, res) => {
+  store.deleteRoom(parseInt(req.params.id, 10));
+  res.redirect('/admin/rooms?msg=' + encodeURIComponent('تم حذف الغرفة وإجاباتها'));
+});
+
 app.get('/admin/qr', requireAdmin, async (req, res) => {
   const base = baseUrl(req);
   const rooms = store.listRooms();

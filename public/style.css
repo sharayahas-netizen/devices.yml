@@ -200,6 +200,9 @@ th { color: var(--muted); font-weight: 600; }
 .inline-form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
 .inline-form input { width: auto; }
 .link-btn { background: none; border: none; color: var(--primary); cursor: pointer; text-decoration: underline; font: inherit; }
+.link-btn.danger { color: var(--danger); }
+.actions-cell { white-space: nowrap; }
+.actions-cell form { display: inline-block; margin-inline-end: 8px; }
 
 .settings-form { display: grid; gap: 14px; }
 .settings-form label { font-weight: 600; font-size: 0.95rem; display: grid; gap: 6px; }

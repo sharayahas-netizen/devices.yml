@@ -23,7 +23,7 @@
       <div class="qr-card">
         <div class="qr-hotel"><%= hotel %></div>
         <img src="<%= c.dataUrl %>" alt="QR">
-        <div class="qr-room">غرفة <%= c.room.room_number %> · Room <%= c.room.room_number %></div>
+        <div class="qr-room"><%= /^\d+$/.test(c.room.room_number) ? `غرفة ${c.room.room_number} · Room ${c.room.room_number}` : c.room.room_number %></div>
         <div class="qr-hint">شاركنا رأيك — امسح الرمز<br>Scan to share your feedback</div>
       </div>
     <% } %>

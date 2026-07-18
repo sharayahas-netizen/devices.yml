@@ -64,8 +64,8 @@ if (!getSetting('admin_password_hash')) {
 if (!getSetting('session_secret')) {
   setSetting('session_secret', crypto.randomBytes(32).toString('hex'));
 }
-if (!getSetting('hotel_name_ar')) setSetting('hotel_name_ar', 'فندقنا');
-if (!getSetting('hotel_name_en')) setSetting('hotel_name_en', 'Our Hotel');
+if (!getSetting('hotel_name_ar')) setSetting('hotel_name_ar', 'فندق القصر');
+if (!getSetting('hotel_name_en')) setSetting('hotel_name_en', 'Al Qasr Hotel');
 if (!getSetting('lock_hours')) setSetting('lock_hours', '24');
 
 function newToken() {
@@ -92,6 +92,10 @@ function lockRoom(roomId, hours) {
 
 function reopenRoom(roomId) {
   db.prepare('UPDATE rooms SET locked_until = NULL WHERE id = ?').run(roomId);
+}
+
+function deleteRoom(roomId) {
+  db.prepare('DELETE FROM rooms WHERE id = ?').run(roomId);
 }
 
 function addRoom(roomNumber) {
@@ -163,6 +167,7 @@ module.exports = {
   isRoomLocked,
   lockRoom,
   reopenRoom,
+  deleteRoom,
   addRoom,
   listRooms,
   insertResponse,

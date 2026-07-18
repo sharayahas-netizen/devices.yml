@@ -4,7 +4,8 @@
   "description": "Hotel guest satisfaction survey via per-room QR codes",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "seed": "node scripts/seed-rooms.js"
   },
   "engines": {
     "node": ">=22.5.0"

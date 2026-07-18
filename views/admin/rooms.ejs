@@ -34,12 +34,16 @@
             <td><%= room.locked ? room.locked_until : '—' %></td>
             <td><%= room.response_count %></td>
             <td class="muted small-text"><%= base %>/s/<%= room.token %></td>
-            <td>
+            <td class="actions-cell">
               <% if (room.locked) { %>
                 <form method="POST" action="/admin/rooms/<%= room.id %>/reopen">
                   <button type="submit" class="link-btn">فتح الآن</button>
                 </form>
               <% } %>
+              <form method="POST" action="/admin/rooms/<%= room.id %>/delete"
+                    onsubmit="return confirm('حذف الغرفة <%= room.room_number %>؟ سيتم حذف إجاباتها أيضاً ولن يعمل رمز QR الخاص بها.')">
+                <button type="submit" class="link-btn danger">حذف</button>
+              </form>
             </td>
           </tr>
         <% } %>
