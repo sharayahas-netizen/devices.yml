@@ -67,6 +67,7 @@ if (!getSetting('session_secret')) {
 if (!getSetting('hotel_name_ar')) setSetting('hotel_name_ar', 'فندق القصر');
 if (!getSetting('hotel_name_en')) setSetting('hotel_name_en', 'Al Qasr Hotel');
 if (!getSetting('lock_hours')) setSetting('lock_hours', '24');
+if (!getSetting('base_url')) setSetting('base_url', 'http://192.168.1.14:3000');
 
 function newToken() {
   return crypto.randomBytes(10).toString('hex');
