@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم — الإعدادات</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="admin">
+  <%- include('_nav') %>
+  <div class="container">
+    <h2>الإعدادات</h2>
+    <% if (message) { %><div class="success"><%= message %></div><% } %>
+
+    <form method="POST" action="/admin/settings" class="card settings-form">
+      <label>اسم الفندق (عربي)
+        <input type="text" name="hotel_name_ar" value="<%= values.hotel_name_ar %>" required>
+      </label>
+      <label>اسم الفندق (إنجليزي)
+        <input type="text" name="hotel_name_en" value="<%= values.hotel_name_en %>" required>
+      </label>
+      <label>مدة قفل الغرفة بعد التعبئة (بالساعات)
+        <input type="number" name="lock_hours" value="<%= values.lock_hours %>" min="1" max="720" required>
+      </label>
+      <label>رابط السيرفر (يُستخدم في رموز QR)
+        <input type="text" name="base_url" value="<%= values.base_url %>" placeholder="https://survey.example.com" dir="ltr">
+      </label>
+      <label>كلمة مرور جديدة للوحة التحكم (اتركها فارغة لعدم التغيير)
+        <input type="password" name="new_password" minlength="6" placeholder="6 أحرف على الأقل" dir="ltr">
+      </label>
+      <button type="submit" class="submit-btn">حفظ</button>
+    </form>
+  </div>
+</body>
+</html>

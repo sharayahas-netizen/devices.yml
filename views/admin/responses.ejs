@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم — الإجابات</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="admin">
+  <%- include('_nav') %>
+  <div class="container wide">
+    <h2>الإجابات (<%= responses.length %>)</h2>
+    <% if (responses.length === 0) { %>
+      <div class="card"><p>لا توجد إجابات بعد.</p></div>
+    <% } %>
+    <% for (const r of responses) { %>
+      <div class="card response-card">
+        <div class="response-head">
+          <strong>غرفة <%= r.room_number %></strong>
+          <span class="muted"><%= r.submitted_at %> (UTC)</span>
+          <span class="overall-badge <%= r.overall >= 4 ? 'good' : r.overall >= 3 ? 'mid' : 'bad' %>">التقييم العام: <%= r.overall %>/5</span>
+          <span class="rec-badge">التوصية: <%= { yes: 'نعم 👍', maybe: 'ربما 🤔', no: 'لا 👎' }[r.recommend] %></span>
+        </div>
+        <div class="ratings-grid">
+          <% for (const key of ratingKeys) { if (key === 'overall') continue; %>
+            <span class="rating-chip"><%= labels[key] %>: <b><%= r[key] %></b></span>
+          <% } %>
+        </div>
+        <% if (r.comments) { %><p class="comment">💬 <%= r.comments %></p><% } %>
+        <% if (r.contact) { %><p class="muted">📞 للتواصل: <%= r.contact %></p><% } %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

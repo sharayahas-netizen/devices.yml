@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم — الغرف</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="admin">
+  <%- include('_nav') %>
+  <div class="container wide">
+    <h2>الغرف (<%= rooms.length %>)</h2>
+    <% if (message) { %><div class="success"><%= message %></div><% } %>
+
+    <div class="card">
+      <h3>إضافة غرف</h3>
+      <form method="POST" action="/admin/rooms/add" class="inline-form">
+        <label>نطاق: من <input type="number" name="from" min="1" style="width:90px"></label>
+        <label>إلى <input type="number" name="to" min="1" style="width:90px"></label>
+        <span class="muted">أو غرفة واحدة:</span>
+        <input type="text" name="room_number" placeholder="مثال: 101A" style="width:110px">
+        <button type="submit" class="submit-btn small">إضافة</button>
+      </form>
+      <p class="muted">مثال: من 101 إلى 150 يضيف 50 غرفة دفعة واحدة. الغرف المكررة تُتجاهل.</p>
+    </div>
+
+    <div class="card">
+      <table>
+        <tr><th>الغرفة</th><th>الحالة</th><th>مقفلة حتى (UTC)</th><th>عدد الإجابات</th><th>رابط الاستبيان</th><th></th></tr>
+        <% for (const room of rooms) { %>
+          <tr>
+            <td><strong><%= room.room_number %></strong></td>
+            <td><%= room.locked ? '🔒 معبأ' : '🟢 متاح' %></td>
+            <td><%= room.locked ? room.locked_until : '—' %></td>
+            <td><%= room.response_count %></td>
+            <td class="muted small-text"><%= base %>/s/<%= room.token %></td>
+            <td>
+              <% if (room.locked) { %>
+                <form method="POST" action="/admin/rooms/<%= room.id %>/reopen">
+                  <button type="submit" class="link-btn">فتح الآن</button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+        <% } %>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

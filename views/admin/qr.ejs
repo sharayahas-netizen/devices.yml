@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم — رموز QR</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="admin">
+  <div class="no-print">
+    <%- include('_nav') %>
+    <div class="container wide">
+      <h2>رموز QR للغرف</h2>
+      <div class="card">
+        <p>اضغط «طباعة» لطباعة الملصقات، ثم قصّها وعلّق كل ملصق في غرفته. تأكد أولاً من ضبط «رابط السيرفر» في الإعدادات حتى تشير الرموز إلى العنوان الصحيح.</p>
+        <button onclick="window.print()" class="submit-btn small">🖨️ طباعة الملصقات</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="qr-sheet">
+    <% for (const c of cards) { %>
+      <div class="qr-card">
+        <div class="qr-hotel"><%= hotel %></div>
+        <img src="<%= c.dataUrl %>" alt="QR">
+        <div class="qr-room">غرفة <%= c.room.room_number %> · Room <%= c.room.room_number %></div>
+        <div class="qr-hint">شاركنا رأيك — امسح الرمز<br>Scan to share your feedback</div>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

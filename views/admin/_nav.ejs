@@ -1,0 +1,10 @@
+<nav class="admin-nav">
+  <span class="brand">🏨 <%= hotel %></span>
+  <a href="/admin" class="<%= page === 'dashboard' ? 'active' : '' %>">الإحصائيات</a>
+  <a href="/admin/responses" class="<%= page === 'responses' ? 'active' : '' %>">الإجابات</a>
+  <a href="/admin/rooms" class="<%= page === 'rooms' ? 'active' : '' %>">الغرف</a>
+  <a href="/admin/qr" class="<%= page === 'qr' ? 'active' : '' %>">رموز QR</a>
+  <a href="/admin/settings" class="<%= page === 'settings' ? 'active' : '' %>">الإعدادات</a>
+  <a href="/admin/export.csv">تصدير Excel</a>
+  <form method="POST" action="/admin/logout" class="logout-form"><button type="submit">خروج</button></form>
+</nav>

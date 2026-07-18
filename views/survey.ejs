@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>" dir="<%= t.dir %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= hotel %> — <%= t.welcomeTitle %></title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="guest">
+  <div class="container">
+    <header class="hero">
+      <div class="lang-switch">
+        <a href="/s/<%= room.token %>?lang=<%= lang === 'ar' ? 'en' : 'ar' %>"><%= t.switchLang %></a>
+      </div>
+      <h1><%= hotel %></h1>
+      <h2><%= t.welcomeTitle %></h2>
+      <p><%= t.welcomeText %></p>
+      <span class="room-badge"><%= t.roomLabel %> <%= room.room_number %></span>
+    </header>
+
+    <% if (error) { %><div class="alert"><%= error %></div><% } %>
+
+    <form method="POST" action="/s/<%= room.token %>?lang=<%= lang %>" id="surveyForm">
+      <% for (const section of sections) { %>
+        <section class="card">
+          <h3><span class="icon"><%= section.icon %></span> <%= section.title[lang] %></h3>
+          <% for (const q of section.questions) { %>
+            <div class="question">
+              <label><%= q[lang] %></label>
+              <div class="stars" data-name="<%= q.key %>">
+                <% for (let i = 1; i <= 5; i++) { %>
+                  <button type="button" class="star" data-value="<%= i %>" title="<%= t.stars[i-1] %>">★</button>
+                <% } %>
+                <input type="hidden" name="<%= q.key %>" value="">
+              </div>
+            </div>
+          <% } %>
+        </section>
+      <% } %>
+
+      <section class="card">
+        <h3><span class="icon">⭐</span> <%= t.finalTitle %></h3>
+        <div class="question">
+          <label><%= t.overall %></label>
+          <div class="stars" data-name="overall">
+            <% for (let i = 1; i <= 5; i++) { %>
+              <button type="button" class="star" data-value="<%= i %>" title="<%= t.stars[i-1] %>">★</button>
+            <% } %>
+            <input type="hidden" name="overall" value="">
+          </div>
+        </div>
+        <div class="question">
+          <label><%= t.recommend %></label>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="recommend" value="yes"><span><%= t.recommendYes %> 👍</span></label>
+            <label class="choice"><input type="radio" name="recommend" value="maybe"><span><%= t.recommendMaybe %> 🤔</span></label>
+            <label class="choice"><input type="radio" name="recommend" value="no"><span><%= t.recommendNo %> 👎</span></label>
+          </div>
+        </div>
+        <div class="question">
+          <label><%= t.comments %></label>
+          <textarea name="comments" rows="4" maxlength="2000" placeholder="<%= t.commentsPlaceholder %>"></textarea>
+        </div>
+        <div class="question">
+          <label><%= t.contact %></label>
+          <input type="text" name="contact" maxlength="200">
+        </div>
+      </section>
+
+      <p class="note"><%= t.requiredNote %></p>
+      <div id="formError" class="alert" hidden><%= t.missingAnswers %></div>
+      <button type="submit" class="submit-btn"><%= t.submit %></button>
+    </form>
+  </div>
+
+  <script>
+    document.querySelectorAll('.stars').forEach(function (group) {
+      var input = group.querySelector('input[type=hidden]');
+      var stars = group.querySelectorAll('.star');
+      stars.forEach(function (star) {
+        star.addEventListener('click', function () {
+          var value = parseInt(star.dataset.value, 10);
+          input.value = value;
+          stars.forEach(function (s) {
+            s.classList.toggle('active', parseInt(s.dataset.value, 10) <= value);
+          });
+        });
+      });
+    });
+
+    document.getElementById('surveyForm').addEventListener('submit', function (e) {
+      var missing = false;
+      document.querySelectorAll('.stars input[type=hidden]').forEach(function (input) {
+        var empty = input.value === '';
+        input.closest('.question').classList.toggle('missing', empty);
+        if (empty) missing = true;
+      });
+      if (!document.querySelector('input[name=recommend]:checked')) {
+        document.querySelector('.choices').closest('.question').classList.add('missing');
+        missing = true;
+      }
+      if (missing) {
+        e.preventDefault();
+        var err = document.getElementById('formError');
+        err.hidden = false;
+        document.querySelector('.question.missing').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم — تسجيل الدخول</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="guest">
+  <div class="container">
+    <div class="card center-card">
+      <div class="big-icon">🔐</div>
+      <h2>لوحة تحكم الاستبيان</h2>
+      <% if (error) { %><div class="alert"><%= error %></div><% } %>
+      <form method="POST" action="/admin/login" class="login-form">
+        <input type="password" name="password" placeholder="كلمة المرور" required autofocus>
+        <button type="submit" class="submit-btn">دخول</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم — الإحصائيات</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="admin">
+  <%- include('_nav') %>
+  <div class="container wide">
+    <h2>الإحصائيات العامة</h2>
+
+    <div class="stat-tiles">
+      <div class="tile">
+        <div class="tile-value"><%= stats.total %></div>
+        <div class="tile-label">إجمالي الاستبيانات</div>
+      </div>
+      <div class="tile">
+        <div class="tile-value"><%= stats.averages.overall ?? '—' %></div>
+        <div class="tile-label">متوسط التقييم العام (من 5)</div>
+      </div>
+      <% const rec = Object.fromEntries(stats.recommend.map(r => [r.recommend, r.n])); %>
+      <div class="tile">
+        <div class="tile-value"><%= stats.total ? Math.round(((rec.yes || 0) / stats.total) * 100) + '%' : '—' %></div>
+        <div class="tile-label">ينصحون بالفندق</div>
+      </div>
+    </div>
+
+    <% if (stats.total === 0) { %>
+      <div class="card"><p>لا توجد إجابات بعد. أضف الغرف من صفحة «الغرف» ثم اطبع رموز QR وعلّقها في الغرف.</p></div>
+    <% } else { %>
+      <div class="card">
+        <h3>متوسط كل بند (من 5)</h3>
+        <% for (const key of ratingKeys) { const avg = stats.averages[key]; %>
+          <div class="bar-row">
+            <span class="bar-label"><%= labels[key] %></span>
+            <div class="bar-track"><div class="bar-fill <%= avg >= 4 ? 'good' : avg >= 3 ? 'mid' : 'bad' %>" style="width: <%= (avg / 5) * 100 %>%"></div></div>
+            <span class="bar-value"><%= avg %></span>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="card">
+        <h3>آخر 14 يوماً</h3>
+        <table>
+          <tr><th>اليوم</th><th>عدد الإجابات</th><th>متوسط التقييم العام</th></tr>
+          <% for (const d of stats.byDay) { %>
+            <tr><td><%= d.day %></td><td><%= d.n %></td><td><%= d.avg_overall %></td></tr>
+          <% } %>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>
