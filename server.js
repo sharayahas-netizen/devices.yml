@@ -1,10 +1,12 @@
 'use strict';
 
 const path = require('node:path');
+const fs = require('node:fs');
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const QRCode = require('qrcode');
+const multer = require('multer');
 
 const store = require('./src/db');
 const { SECTIONS, UI, QUESTION_LABELS_AR } = require('./src/i18n');
@@ -17,6 +19,24 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use('/static', express.static(path.join(__dirname, 'public')));
 app.set('trust proxy', 1);
+
+const LOGO_PATH = path.join(store.DATA_DIR, 'logo.img');
+const LOGO_MIMES = ['image/png', 'image/jpeg', 'image/webp'];
+const uploadLogo = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024 },
+});
+
+app.use((req, res, next) => {
+  res.locals.hasLogo = fs.existsSync(LOGO_PATH);
+  next();
+});
+
+app.get('/logo', (req, res) => {
+  if (!fs.existsSync(LOGO_PATH)) return res.status(404).end();
+  res.type(store.getSetting('logo_mime', 'image/png'));
+  res.sendFile(LOGO_PATH);
+});
 
 app.use(
   session({
@@ -243,7 +263,15 @@ app.get('/admin/settings', requireAdmin, (req, res) => {
   });
 });
 
-app.post('/admin/settings', requireAdmin, (req, res) => {
+app.post('/admin/settings', requireAdmin, uploadLogo.single('logo'), (req, res) => {
+  if (req.file) {
+    if (!LOGO_MIMES.includes(req.file.mimetype)) {
+      return res.redirect('/admin/settings?msg=' + encodeURIComponent('صيغة الشعار غير مدعومة — استخدم PNG أو JPG أو WebP'));
+    }
+    fs.writeFileSync(LOGO_PATH, req.file.buffer);
+    store.setSetting('logo_mime', req.file.mimetype);
+  }
+  if (req.body.remove_logo === '1' && fs.existsSync(LOGO_PATH)) fs.unlinkSync(LOGO_PATH);
   if (req.body.hotel_name_ar) store.setSetting('hotel_name_ar', String(req.body.hotel_name_ar).trim());
   if (req.body.hotel_name_en) store.setSetting('hotel_name_en', String(req.body.hotel_name_en).trim());
   const hours = parseInt(req.body.lock_hours, 10);

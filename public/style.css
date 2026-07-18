@@ -1,15 +1,17 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Brand palette: Al Qasr Hotel — dark navy + copper gold (from the logo) */
 :root {
-  --primary: #1a5f4a;
-  --primary-light: #2d8a6e;
-  --gold: #f5b301;
-  --bg: #f4f6f5;
+  --primary: #21324a;
+  --primary-light: #35507a;
+  --gold: #cf9670;
+  --bg: #f5f4f2;
   --card: #ffffff;
-  --text: #1f2a26;
-  --muted: #6b7a74;
+  --text: #222b38;
+  --muted: #6f7885;
   --danger: #c0392b;
-  --success-bg: #e6f7ef;
+  --success-bg: #e9f5ef;
+  --accent-bg: #f8f0e8;
   --radius: 14px;
 }
 
@@ -92,7 +94,7 @@ body {
   font-weight: 600;
   cursor: pointer;
 }
-.choice input:checked + span { border-color: var(--primary); background: var(--success-bg); color: var(--primary); }
+.choice input:checked + span { border-color: var(--gold); background: var(--accent-bg); color: var(--primary); }
 
 textarea, input[type="text"], input[type="password"], input[type="number"] {
   width: 100%;
@@ -138,6 +140,11 @@ textarea:focus, input:focus { outline: none; border-color: var(--primary-light);
   margin-bottom: 12px;
   font-weight: 600;
 }
+
+.logo { max-width: 130px; border-radius: 12px; margin-bottom: 10px; }
+.qr-logo { width: 64px; border-radius: 8px; margin-bottom: 4px; }
+.inline-check { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.inline-check input { width: auto; }
 
 .center-card { text-align: center; padding: 40px 24px; margin-top: 15vh; }
 .center-card .big-icon { font-size: 3.5rem; margin: 10px 0; }
@@ -186,7 +193,7 @@ textarea:focus, input:focus { outline: none; border-color: var(--primary-light);
 .bar-label { font-size: 0.88rem; }
 .bar-track { background: #e8edeb; border-radius: 999px; height: 12px; overflow: hidden; }
 .bar-fill { height: 100%; border-radius: 999px; }
-.bar-fill.good { background: #2d8a6e; }
+.bar-fill.good { background: #2e9268; }
 .bar-fill.mid { background: var(--gold); }
 .bar-fill.bad { background: var(--danger); }
 .bar-value { font-weight: 700; font-size: 0.9rem; }
@@ -209,12 +216,12 @@ th { color: var(--muted); font-weight: 600; }
 
 .response-card .response-head { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
 .overall-badge { border-radius: 999px; padding: 2px 12px; font-size: 0.85rem; font-weight: 700; color: #fff; }
-.overall-badge.good { background: #2d8a6e; }
+.overall-badge.good { background: #2e9268; }
 .overall-badge.mid { background: var(--gold); color: #4a3b00; }
 .overall-badge.bad { background: var(--danger); }
 .rec-badge { font-size: 0.88rem; }
 .ratings-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
-.rating-chip { background: #eef4f1; border-radius: 8px; padding: 3px 10px; font-size: 0.8rem; }
+.rating-chip { background: #eef1f5; border-radius: 8px; padding: 3px 10px; font-size: 0.8rem; }
 .comment { background: #fbf7ea; border-radius: 10px; padding: 8px 12px; margin-top: 6px; }
 
 /* ---------- QR print sheet ---------- */

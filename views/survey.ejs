@@ -12,6 +12,7 @@
       <div class="lang-switch">
         <a href="/s/<%= room.token %>?lang=<%= lang === 'ar' ? 'en' : 'ar' %>"><%= t.switchLang %></a>
       </div>
+      <% if (hasLogo) { %><img src="/logo" alt="" class="logo"><% } %>
       <h1><%= hotel %></h1>
       <h2><%= t.welcomeTitle %></h2>
       <p><%= t.welcomeText %></p>

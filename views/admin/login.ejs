@@ -9,7 +9,7 @@
 <body class="guest">
   <div class="container">
     <div class="card center-card">
-      <div class="big-icon">🔐</div>
+      <% if (hasLogo) { %><img src="/logo" alt="" class="logo"><% } else { %><div class="big-icon">🔐</div><% } %>
       <h2>لوحة تحكم الاستبيان</h2>
       <% if (error) { %><div class="alert"><%= error %></div><% } %>
       <form method="POST" action="/admin/login" class="login-form">

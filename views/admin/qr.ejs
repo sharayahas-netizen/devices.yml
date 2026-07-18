@@ -21,6 +21,7 @@
   <div class="qr-sheet">
     <% for (const c of cards) { %>
       <div class="qr-card">
+        <% if (hasLogo) { %><img src="/logo" alt="" class="qr-logo"><% } %>
         <div class="qr-hotel"><%= hotel %></div>
         <img src="<%= c.dataUrl %>" alt="QR">
         <div class="qr-room"><%= /^\d+$/.test(c.room.room_number) ? `غرفة ${c.room.room_number} · Room ${c.room.room_number}` : c.room.room_number %></div>

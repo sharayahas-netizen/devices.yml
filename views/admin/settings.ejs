@@ -12,7 +12,17 @@
     <h2>الإعدادات</h2>
     <% if (message) { %><div class="success"><%= message %></div><% } %>
 
-    <form method="POST" action="/admin/settings" class="card settings-form">
+    <form method="POST" action="/admin/settings" enctype="multipart/form-data" class="card settings-form">
+      <label>شعار الفندق (PNG / JPG / WebP — حتى 2MB)
+        <% if (hasLogo) { %>
+          <img src="/logo" alt="الشعار الحالي" style="max-width:120px;border-radius:10px;margin:4px 0">
+          <span class="muted">الشعار الحالي — اختر ملفاً جديداً لاستبداله</span>
+        <% } %>
+        <input type="file" name="logo" accept="image/png,image/jpeg,image/webp">
+      </label>
+      <% if (hasLogo) { %>
+        <label class="inline-check"><input type="checkbox" name="remove_logo" value="1"> إزالة الشعار الحالي</label>
+      <% } %>
       <label>اسم الفندق (عربي)
         <input type="text" name="hotel_name_ar" value="<%= values.hotel_name_ar %>" required>
       </label>

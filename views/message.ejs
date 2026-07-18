@@ -9,6 +9,7 @@
 <body class="guest">
   <div class="container">
     <div class="card center-card">
+      <% if (hasLogo) { %><img src="/logo" alt="" class="logo"><% } %>
       <h1 class="hotel-name"><%= hotel %></h1>
       <div class="big-icon"><%= title === t.thanksTitle ? '💚' : (title === t.closedTitle ? '✅' : '⚠️') %></div>
       <h2><%= title %></h2>

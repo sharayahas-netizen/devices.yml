@@ -160,6 +160,7 @@ function stats() {
 
 module.exports = {
   db,
+  DATA_DIR,
   RATING_KEYS,
   getSetting,
   setSetting,
