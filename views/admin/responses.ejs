@@ -10,13 +10,49 @@
   <%- include('_nav') %>
   <div class="container wide">
     <h2>الإجابات (<%= responses.length %>)</h2>
+
+    <form method="GET" action="/admin/responses" class="card filter-bar">
+      <label>بحث
+        <input type="text" name="q" value="<%= filters.q || '' %>" placeholder="اسم النزيل، الملاحظات، رقم التواصل">
+      </label>
+      <label>الغرفة
+        <select name="room">
+          <option value="">كل الغرف</option>
+          <% for (const r of rooms) { %>
+            <option value="<%= r.id %>" <%= filters.roomId === r.id ? 'selected' : '' %>><%= r.room_number %></option>
+          <% } %>
+        </select>
+      </label>
+      <label>من تاريخ
+        <input type="date" name="from" value="<%= filters.from || '' %>">
+      </label>
+      <label>إلى تاريخ
+        <input type="date" name="to" value="<%= filters.to || '' %>">
+      </label>
+      <label>الترتيب
+        <select name="sort">
+          <option value="newest" <%= filters.sort === 'newest' ? 'selected' : '' %>>الأحدث أولاً</option>
+          <option value="oldest" <%= filters.sort === 'oldest' ? 'selected' : '' %>>الأقدم أولاً</option>
+          <option value="room" <%= filters.sort === 'room' ? 'selected' : '' %>>رقم الغرفة</option>
+          <option value="overall_desc" <%= filters.sort === 'overall_desc' ? 'selected' : '' %>>الأعلى تقييماً</option>
+          <option value="overall_asc" <%= filters.sort === 'overall_asc' ? 'selected' : '' %>>الأدنى تقييماً</option>
+        </select>
+      </label>
+      <div class="filter-actions">
+        <button type="submit" class="submit-btn small">تطبيق</button>
+        <a href="/admin/responses" class="link-btn">مسح التصفية</a>
+        <a href="/admin/export.csv?<%= new URLSearchParams(query).toString() %>" class="link-btn">تصدير النتائج المعروضة Excel</a>
+      </div>
+    </form>
+
     <% if (responses.length === 0) { %>
-      <div class="card"><p>لا توجد إجابات بعد.</p></div>
+      <div class="card"><p>لا توجد إجابات مطابقة.</p></div>
     <% } %>
     <% for (const r of responses) { %>
       <div class="card response-card">
         <div class="response-head">
-          <strong>غرفة <%= r.room_number %></strong>
+          <strong><%= /^\d+$/.test(r.room_number) ? `غرفة ${r.room_number}` : r.room_number %></strong>
+          <% if (r.guest_name) { %><span class="guest-badge">👤 <%= r.guest_name %></span><% } %>
           <span class="muted"><%= r.submitted_at %> (UTC)</span>
           <span class="overall-badge <%= r.overall >= 4 ? 'good' : r.overall >= 3 ? 'mid' : 'bad' %>">التقييم العام: <%= r.overall %>/5</span>
           <span class="rec-badge">التوصية: <%= { yes: 'نعم 👍', maybe: 'ربما 🤔', no: 'لا 👎' }[r.recommend] %></span>

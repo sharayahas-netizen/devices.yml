@@ -55,6 +55,14 @@ db.exec(`
   );
 `);
 
+// Lightweight migrations for databases created by older versions.
+function ensureColumn(table, column, ddl) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all();
+  if (!cols.some((c) => c.name === column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${ddl}`);
+}
+ensureColumn('rooms', 'guest_name', 'guest_name TEXT');
+ensureColumn('responses', 'guest_name', 'guest_name TEXT');
+
 function getSetting(key, fallback = null) {
   const row = db.prepare('SELECT value FROM settings WHERE key = ?').get(key);
   return row ? row.value : fallback;
@@ -127,8 +135,8 @@ function listRooms() {
     .all();
 }
 
-function insertResponse(roomId, language, ratings, recommend, comments, contact) {
-  const cols = ['room_id', 'language', ...RATING_KEYS, 'recommend', 'comments', 'contact'];
+function insertResponse(roomId, language, ratings, recommend, comments, contact, guestName) {
+  const cols = ['room_id', 'language', ...RATING_KEYS, 'recommend', 'comments', 'contact', 'guest_name'];
   const placeholders = cols.map(() => '?').join(', ');
   db.prepare(`INSERT INTO responses (${cols.join(', ')}) VALUES (${placeholders})`).run(
     roomId,
@@ -136,20 +144,54 @@ function insertResponse(roomId, language, ratings, recommend, comments, contact)
     ...RATING_KEYS.map((k) => ratings[k]),
     recommend,
     comments || null,
-    contact || null
+    contact || null,
+    guestName || null
   );
 }
 
-function listResponses(limit = 500) {
+function setRoomGuest(roomId, guestName) {
+  db.prepare('UPDATE rooms SET guest_name = ? WHERE id = ?').run(guestName || null, roomId);
+}
+
+const RESPONSE_SORTS = {
+  newest: 'resp.submitted_at DESC',
+  oldest: 'resp.submitted_at ASC',
+  room: 'CAST(r.room_number AS INTEGER), r.room_number, resp.submitted_at DESC',
+  overall_desc: 'resp.overall DESC, resp.submitted_at DESC',
+  overall_asc: 'resp.overall ASC, resp.submitted_at DESC',
+};
+
+function listResponses(filters = {}, limit = 500) {
+  const where = [];
+  const params = [];
+  if (filters.roomId) {
+    where.push('resp.room_id = ?');
+    params.push(filters.roomId);
+  }
+  if (filters.from) {
+    where.push('date(resp.submitted_at) >= date(?)');
+    params.push(filters.from);
+  }
+  if (filters.to) {
+    where.push('date(resp.submitted_at) <= date(?)');
+    params.push(filters.to);
+  }
+  if (filters.q) {
+    where.push('(resp.comments LIKE ? OR resp.contact LIKE ? OR resp.guest_name LIKE ?)');
+    const like = `%${filters.q}%`;
+    params.push(like, like, like);
+  }
+  const orderBy = RESPONSE_SORTS[filters.sort] || RESPONSE_SORTS.newest;
   return db
     .prepare(
       `SELECT resp.*, r.room_number
          FROM responses resp
          JOIN rooms r ON r.id = resp.room_id
-        ORDER BY resp.submitted_at DESC
+        ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
+        ORDER BY ${orderBy}
         LIMIT ?`
     )
-    .all(limit);
+    .all(...params, limit);
 }
 
 function stats() {
@@ -180,6 +222,7 @@ module.exports = {
   reopenRoom,
   deleteRoom,
   addRoom,
+  setRoomGuest,
   listRooms,
   insertResponse,
   listResponses,

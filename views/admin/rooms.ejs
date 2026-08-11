@@ -26,10 +26,16 @@
 
     <div class="card">
       <table>
-        <tr><th>الغرفة</th><th>الحالة</th><th>مقفلة حتى (UTC)</th><th>عدد الإجابات</th><th>رابط الاستبيان</th><th></th></tr>
+        <tr><th>الغرفة</th><th>النزيل الحالي</th><th>الحالة</th><th>مقفلة حتى (UTC)</th><th>عدد الإجابات</th><th>رابط الاستبيان</th><th></th></tr>
         <% for (const room of rooms) { %>
           <tr>
             <td><strong><%= room.room_number %></strong></td>
+            <td>
+              <form method="POST" action="/admin/rooms/<%= room.id %>/guest" class="guest-form">
+                <input type="text" name="guest_name" value="<%= room.guest_name || '' %>" placeholder="اسم النزيل (اختياري)" maxlength="100">
+                <button type="submit" class="link-btn">حفظ</button>
+              </form>
+            </td>
             <td><%= room.locked ? '🔒 معبأ' : '🟢 متاح' %></td>
             <td><%= room.locked ? room.locked_until : '—' %></td>
             <td><%= room.response_count %></td>

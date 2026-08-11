@@ -119,7 +119,7 @@ app.post('/s/:token', (req, res) => {
   const comments = String(req.body.comments || '').slice(0, 2000).trim();
   const contact = String(req.body.contact || '').slice(0, 200).trim();
 
-  store.insertResponse(room.id, lang, ratings, recommend, comments, contact);
+  store.insertResponse(room.id, lang, ratings, recommend, comments, contact, room.guest_name);
   store.lockRoom(room.id, parseInt(store.getSetting('lock_hours', '24'), 10) || 24);
 
   res.render('message', {
@@ -160,11 +160,26 @@ app.get('/admin', requireAdmin, (req, res) => {
   });
 });
 
+function parseResponseFilters(req) {
+  const isDate = (v) => /^\d{4}-\d{2}-\d{2}$/.test(v || '');
+  return {
+    roomId: parseInt(req.query.room, 10) || null,
+    from: isDate(req.query.from) ? req.query.from : null,
+    to: isDate(req.query.to) ? req.query.to : null,
+    q: String(req.query.q || '').trim().slice(0, 100) || null,
+    sort: String(req.query.sort || 'newest'),
+  };
+}
+
 app.get('/admin/responses', requireAdmin, (req, res) => {
+  const filters = parseResponseFilters(req);
   res.render('admin/responses', {
     page: 'responses',
     hotel: store.getSetting('hotel_name_ar'),
-    responses: store.listResponses(),
+    responses: store.listResponses(filters),
+    rooms: store.listRooms(),
+    filters,
+    query: req.query,
     labels: QUESTION_LABELS_AR,
     ratingKeys: store.RATING_KEYS,
   });
@@ -202,6 +217,12 @@ app.post('/admin/rooms/:id/reopen', requireAdmin, (req, res) => {
   res.redirect('/admin/rooms?msg=' + encodeURIComponent('تم فتح الاستبيان للغرفة'));
 });
 
+app.post('/admin/rooms/:id/guest', requireAdmin, (req, res) => {
+  const name = String(req.body.guest_name || '').trim().slice(0, 100);
+  store.setRoomGuest(parseInt(req.params.id, 10), name);
+  res.redirect('/admin/rooms?msg=' + encodeURIComponent(name ? 'تم حفظ اسم النزيل' : 'تم مسح اسم النزيل'));
+});
+
 app.post('/admin/rooms/:id/delete', requireAdmin, (req, res) => {
   store.deleteRoom(parseInt(req.params.id, 10));
   res.redirect('/admin/rooms?msg=' + encodeURIComponent('تم حذف الغرفة وإجاباتها'));
@@ -225,9 +246,9 @@ app.get('/admin/qr', requireAdmin, async (req, res) => {
 });
 
 app.get('/admin/export.csv', requireAdmin, (req, res) => {
-  const rows = store.listResponses(100000);
+  const rows = store.listResponses(parseResponseFilters(req), 100000);
   const header = [
-    'رقم الغرفة', 'التاريخ', 'اللغة',
+    'رقم الغرفة', 'اسم النزيل', 'التاريخ', 'اللغة',
     ...store.RATING_KEYS.map((k) => QUESTION_LABELS_AR[k]),
     'التوصية', 'الملاحظات', 'التواصل',
   ];
@@ -236,7 +257,7 @@ app.get('/admin/export.csv', requireAdmin, (req, res) => {
   for (const r of rows) {
     lines.push(
       [
-        r.room_number, r.submitted_at, r.language,
+        r.room_number, r.guest_name, r.submitted_at, r.language,
         ...store.RATING_KEYS.map((k) => r[k]),
         { yes: 'نعم', maybe: 'ربما', no: 'لا' }[r.recommend],
         r.comments, r.contact,
