@@ -221,7 +221,9 @@ th { color: var(--muted); font-weight: 600; }
 .filter-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .guest-badge { background: var(--accent-bg); color: var(--primary); border-radius: 999px; padding: 2px 12px; font-size: 0.85rem; font-weight: 700; }
 .guest-form { display: flex; gap: 6px; align-items: center; }
-.guest-form input { width: 150px; padding: 5px 8px; font-size: 0.85rem; }
+.guest-form input[type="text"] { width: 150px; padding: 5px 8px; font-size: 0.85rem; }
+.mini-check { display: flex; align-items: center; gap: 3px; font-size: 0.78rem; color: var(--muted); white-space: nowrap; cursor: pointer; }
+.mini-check input { width: auto; }
 
 .response-card .response-head { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
 .overall-badge { border-radius: 999px; padding: 2px 12px; font-size: 0.85rem; font-weight: 700; color: #fff; }

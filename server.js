@@ -218,9 +218,23 @@ app.post('/admin/rooms/:id/reopen', requireAdmin, (req, res) => {
 });
 
 app.post('/admin/rooms/:id/guest', requireAdmin, (req, res) => {
+  const roomId = parseInt(req.params.id, 10);
   const name = String(req.body.guest_name || '').trim().slice(0, 100);
-  store.setRoomGuest(parseInt(req.params.id, 10), name);
-  res.redirect('/admin/rooms?msg=' + encodeURIComponent(name ? 'تم حفظ اسم النزيل' : 'تم مسح اسم النزيل'));
+  store.setRoomGuest(roomId, name);
+  let msg = name ? 'تم حفظ اسم النزيل' : 'تم مسح اسم النزيل';
+  if (req.body.reopen === '1') {
+    store.reopenRoom(roomId);
+    msg = 'تم تسجيل النزيل الجديد وفتح الاستبيان للغرفة';
+  }
+  res.redirect('/admin/rooms?msg=' + encodeURIComponent(msg));
+});
+
+app.get('/admin/backup.db', requireAdmin, (req, res) => {
+  try {
+    store.db.exec('PRAGMA wal_checkpoint(TRUNCATE);');
+  } catch {}
+  res.setHeader('Content-Disposition', 'attachment; filename="alqasr-survey-backup.db"');
+  res.sendFile(store.DB_FILE);
 });
 
 app.post('/admin/rooms/:id/delete', requireAdmin, (req, res) => {

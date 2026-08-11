@@ -33,6 +33,7 @@
             <td>
               <form method="POST" action="/admin/rooms/<%= room.id %>/guest" class="guest-form">
                 <input type="text" name="guest_name" value="<%= room.guest_name || '' %>" placeholder="اسم النزيل (اختياري)" maxlength="100">
+                <label class="mini-check" title="يحفظ الاسم ويفتح الاستبيان للنزيل الجديد بخطوة واحدة"><input type="checkbox" name="reopen" value="1">نزيل جديد</label>
                 <button type="submit" class="link-btn">حفظ</button>
               </form>
             </td>
